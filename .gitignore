@@ -1,0 +1,68 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Linux
+*~
+
+# Virtual environment, Environment variables
+venv/
+env/
+ENV/
+.venv/
+.ENV/
+.env
+.env.*
+.secret
+
+# Python, Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.dll
+*.so
+*.dylib
+cache/
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Flask, logs and databases
+instance/
+*.sqlite3
+*.pyc
+*.log
+*.db
+
+# VS Code configuration
+.vscode/
+
+# PyCharm configuration
+.idea/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Local configuration files
+*.local
+
+# Node.js dependencies
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# Ignore various editor temp files
+*~
+*.swp
+*.swo
+*.tmp

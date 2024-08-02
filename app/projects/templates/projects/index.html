@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+
+{% block navbar_title %}
+    <a class="navbar-brand" href="#">Project list</a>
+{% endblock %}
+
+{% block content %}
+
+    <div class="content">
+        <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal"><i class="fas fa-plus"></i>Create project</button>
+        <ul class="list-group">
+            {% for project in projects %}
+                <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="changeProjectModal" tabindex="-1" aria-labelledby="changeProjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeProjectModalLabel">New project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('projects.store') }}" method="POST">
+                        <input type="text" class="form-control mb-3" id="name" name="name" placeholder="New project">
+                        <input type="submit" value="Save" class="form-control mb-3" id="submit">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

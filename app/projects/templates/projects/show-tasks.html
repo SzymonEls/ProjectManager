@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block navbar_title %}
+    <a class="navbar-brand" href="#" contenteditable="true" id="edit-project-name">{{ project.name }}</a>
+    <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal"><i class="fas fa-exchange-alt"></i></button>
+{% endblock %}
+
+{% block content %}
+   
+   <div class="sidebar">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{{ url_for('projects.show', id=project.id) }}" class="nav-link">
+                    <i class="fas fa-info"></i>
+                    Home
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('projects.show_tasks', id=project.id) }}" class="nav-link active">
+                    <i class="fas fa-tasks"></i>
+                    Tasks
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-info"></i>
+                    Notes
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="fas fa-info"></i>
+                  Events
+                </a>
+            </li>
+            
+          </ul>
+    </div>
+    <div class="content">
+        <!-- Task List Section -->
+        <div class="task-list">
+            {% for task in project.tasks %}
+            <div class="task-item" data-id="{{ task.id }}" data-name="{{ task.name }}">
+                <span contenteditable="true">{{ task.name }}</span>
+                <div class="task-date">
+                    <input type="date" value="{{ task.due_date }}">
+                    <button type="button" class="btn btn-outline-danger btn-sm delete-task">Delete</button>
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Add Task Form -->
+        <div class="add-task-form">
+            <input type="text" id="newTaskName" placeholder="Nowe zadanie">
+            <input type="date" id="newTaskDate">
+            <button onclick="addTask()">Add</button>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="changeProjectModal" tabindex="-1" aria-labelledby="changeProjectModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeProjectModalLabel">Change project</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="text" class="form-control mb-3" id="searchProjects" placeholder="Search projects...">
+                    <ul class="list-group">
+                        {% for project in projects %}
+                            <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <a href="{{ url_for('projects.index') }}">All projects</a>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+    
+{% block javascript %}
+<script>
+    const project_id = "{{ project.id }}";
+</script>
+{% endblock %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/project-edit-name.js') }}"></script>
+<script src="{{ url_for('static', filename='js/project-tasks.js') }}"></script>
+{% endblock %}
