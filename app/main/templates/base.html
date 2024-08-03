@@ -19,10 +19,13 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item mx-2">
+                    <a class="nav-link" href="{{ url_for('projects.index') }}"><i class="fas fa-calendar-alt"></i> Projects</a>
+                </li>
+                <li class="nav-item mx-2">
                     <a class="nav-link" href="#"><i class="fas fa-calendar-alt"></i> Calendar</a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link" href="#"><i class="fas fa-tasks"></i> Tasks</a>
+                    <a class="nav-link" href="{{ url_for('main.tasks') }}"><i class="fas fa-tasks"></i> Tasks</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

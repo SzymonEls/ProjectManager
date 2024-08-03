@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block navbar_title %}
+    <a class="navbar-brand" href="#">All tasks</a>
+{% endblock %}
+
+{% block content %}
+   
+   <div class="sidebar">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li class="nav-item">
+                <a href="{{ url_for('main.tasks_today') }}" class="nav-link">
+                    <i class="fas fa-info"></i>
+                    Today
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ url_for('main.tasks') }}" class="nav-link active">
+                    <i class="fas fa-tasks"></i>
+                    All
+                </a>
+            </li>
+            
+          </ul>
+    </div>
+    <div class="content">
+        <!-- Task List Section -->
+        <div class="task-list">
+            {% for task in tasks %}
+            <div class="task-item" data-id="{{ task.id }}" data-name="{{ task.name }}">
+                <span contenteditable="true" class="task-name">{{ task.name }}</span>
+                <div class="task-date">
+                    <input type="date" class="task-change-date" value="{{ task.due_date }}">
+                    <button type="button" class="btn btn-outline-danger btn-sm delete-task">Delete</button>
+                </div>
+                
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+{% endblock %}
+    
+{% block javascript %}
+<script>
+    const project_id = "1";
+</script>
+{% endblock %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/project-edit-name.js') }}"></script>
+<script src="{{ url_for('static', filename='js/project-tasks.js') }}"></script>
+{% endblock %}

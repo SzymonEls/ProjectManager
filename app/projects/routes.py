@@ -38,10 +38,19 @@ def update(id):
     return redirect(url_for('projects.show', id = id))
 @bp.route('/<id>/tasks/store', methods=["POST"])
 def store_tasks(id):
-    task = Task(name = request.form["name"], project_id = 1, due_date = datetime.strptime(request.form["date"], "%Y-%m-%d").date())
+    task = Task(name = request.form["name"], project_id = id, due_date = datetime.strptime(request.form["date"], "%Y-%m-%d").date())
     db.session.add(task)
     db.session.commit()
     return redirect(url_for('projects.show_tasks', id = id))
+@bp.route('/<project_id>/tasks/<task_id>/update', methods=["POST"])
+def update_tasks(project_id, task_id):
+    task = Task.query.filter_by(id = task_id).first_or_404()
+    if request.form["task_date"] != "":
+        task.due_date = datetime.strptime(request.form["task_date"], "%Y-%m-%d").date()
+    if request.form["task_name"] != "":
+        task.name = request.form["task_name"]
+    db.session.commit()
+    return jsonify({"status": "success"})
 @bp.route('/<id>/tasks/delete', methods=["POST"])
 def delete_tasks(id):
     task = Task.query.filter_by(id = request.form["task_id"]).first_or_404()

@@ -41,9 +41,9 @@
         <div class="task-list">
             {% for task in project.tasks %}
             <div class="task-item" data-id="{{ task.id }}" data-name="{{ task.name }}">
-                <span contenteditable="true">{{ task.name }}</span>
+                <span contenteditable="true" class="task-name">{{ task.name }}</span>
                 <div class="task-date">
-                    <input type="date" value="{{ task.due_date }}">
+                    <input type="date" class="task-change-date" value="{{ task.due_date }}">
                     <button type="button" class="btn btn-outline-danger btn-sm delete-task">Delete</button>
                 </div>
                 

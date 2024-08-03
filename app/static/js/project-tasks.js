@@ -48,7 +48,7 @@ function addTask() {
 function deleteTask(task_element, task_id, task_name){
     if(confirm("Delete task " + task_name + "?")){
         $.ajax({
-            url: '/projects/{{ project.id }}/tasks/delete',
+            url: '/projects/' + project_id + '/tasks/delete',
             type: 'POST',
             data:{
                 "task_id": task_id,
@@ -64,9 +64,51 @@ function deleteTask(task_element, task_id, task_name){
     }
 }
 
+function updateTask(task_id, task_date, task_name){
+    $.ajax({
+        url: '/projects/' + project_id + '/tasks/' + task_id.toString() + '/update',
+        type: 'POST',
+        data:{
+            "task_id": task_id,
+            "task_date": task_date,
+            "task_name": task_name
+        },
+        success: function(response) {
+
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error: ' + status);
+        }
+    });
+}
+
 $(document).on('click', '.delete-task', function() {
     var taskElement = $(this).closest('.task-item');
     var taskId = taskElement.data('id');
     var taskName = taskElement.data('name');
     deleteTask(taskElement, taskId, taskName);
+});
+
+$(document).on('change', ".task-change-date", function() {
+    var taskElement = $(this).closest('.task-item');
+    var taskId = taskElement.data('id');
+    var task_date = $(this).val();
+    updateTask(taskId, task_date, "");
+});
+
+$(document).on('keypress', '.task-name', function(e) {
+    if (e.which == 13) {
+        e.preventDefault(); // No new line
+        $(this).blur();
+    }
+});
+
+$(document).on('blur', '.task-name', function() {
+    const taskItem = $(this).closest('.task-item');
+    const taskId = taskItem.data('id');
+    const taskName = $(this).text().trim();
+    console.log(taskId);
+    // AJAX request to update task name
+    updateTask(taskId, "", taskName);
 });
