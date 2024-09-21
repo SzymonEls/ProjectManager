@@ -1,6 +1,6 @@
 $(document).ready( function(){
     var displayText = document.getElementById('displayText');
-    displayText.innerHTML = marked.parse(displayText.innerText)
+    displayText.innerHTML = marked.parse(project_status_text)
 });
 
 function toggleEditMode() {
@@ -8,8 +8,10 @@ function toggleEditMode() {
     var editText = document.getElementById('editText');
     var editableTextarea = document.getElementById('editableTextarea');
 
+
+
     if (editText.style.display === 'none') {
-        editableTextarea.value = displayText.innerText;
+        editableTextarea.value = project_status_text;
         displayText.style.display = 'none';
         editText.style.display = 'block';
     } else {
@@ -23,6 +25,7 @@ function saveText() {
     var editableTextarea = document.getElementById('editableTextarea');
 
     status_text_new = editableTextarea.value
+    project_status_text = status_text_new;
 
     $.ajax({
             url: '/projects/' + project_id + '/update',

@@ -22,15 +22,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ url_for('projects.events', id=project.id) }}" class="nav-link">
                     <i class="fas fa-info"></i>
-                    Notes
+                    Events
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
+                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link">
                   <i class="fas fa-info"></i>
-                  Events
+                    Notes
                 </a>
             </li>
             

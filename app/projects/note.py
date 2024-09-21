@@ -1,10 +1,10 @@
 from app.extensions import db
 
-class Task(db.Model):
+class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     project_id = db.Column(db.Integer, db.ForeignKey('project.id'))
     name = db.Column(db.String(255))
-    due_date = db.Column(db.Date)
+    content = db.Column(db.Text)
 
     def __repr__(self):
-        return f'<Task "{self.title}">'
+        return f'<Project "{self.title}">'

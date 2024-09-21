@@ -10,7 +10,7 @@
     <div class="sidebar">
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="{{ url_for('projects.show', id=project.id) }}" class="nav-link active">
+                <a href="{{ url_for('projects.show', id=project.id) }}" class="nav-link">
                     <i class="fas fa-info"></i>
                     Home
                 </a>
@@ -28,7 +28,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link">
+                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link active">
                   <i class="fas fa-info"></i>
                     Notes
                 </a>
@@ -37,10 +37,12 @@
           </ul>
     </div>
     <div class="content">
+        <h2 contenteditable="true" id="edit-note-name">{{ note.name }}</h2>
+
         <div class="editable-section">
             <button class="edit-button float-right" onclick="toggleEditMode()"><i class="fas fa-edit"></i> Edit</button>
             <div id="displayText">
-                {{ project.status_text }}
+                {{ note.content }}
             </div>
             <div id="editText" style="display: none;">
                 <textarea id="editableTextarea" class="editable-textarea"></textarea>
@@ -80,11 +82,12 @@
 {% block javascript %}
     <script>
         const project_id = "{{ project.id }}";
-        var project_status_text = `{{ project.status_text }}`;
+        const note_id = "{{ note.id }}";
+        var note_content = `{{ note.content }}`;
     </script>
 {% endblock %}
 
 {% block js_files %}
-    <script src="{{ url_for('static', filename='js/project-edit-description.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/note-edit.js') }}"></script>
     <script src="{{ url_for('static', filename='js/project-edit-name.js') }}"></script>
 {% endblock %}

@@ -1,6 +1,8 @@
 from flask import Flask
 from config import Config
 from app.extensions import db
+from flask_migrate import Migrate
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -8,6 +10,20 @@ def create_app(config_class=Config):
 
     # Initialize Flask extensions here
     db.init_app(app)
+
+    # Initialize Flask-Migrate here
+    migrate = Migrate(app, db)
+
+    # Initialize Flask-Login here
+    login_manager = LoginManager(app)
+    login_manager.login_view = 'main.login'  # Redirect to login page if user is not authenticated
+
+    # User loader function for Flask-Login
+    from app.main.user import User  # Assuming your User model is in app.models
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
     # Register blueprints here
     from app.main import bp as main_bp

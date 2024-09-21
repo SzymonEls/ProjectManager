@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block navbar_title %}
     <a class="navbar-brand" href="#" contenteditable="true" id="edit-project-name">{{ project.name }}</a>
@@ -6,11 +6,11 @@
 {% endblock %}
 
 {% block content %}
-
-    <div class="sidebar">
+   
+   <div class="sidebar">
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="{{ url_for('projects.show', id=project.id) }}" class="nav-link active">
+                <a href="{{ url_for('projects.show', id=project.id) }}" class="nav-link">
                     <i class="fas fa-info"></i>
                     Home
                 </a>
@@ -28,7 +28,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link">
+                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link active">
                   <i class="fas fa-info"></i>
                     Notes
                 </a>
@@ -37,16 +37,12 @@
           </ul>
     </div>
     <div class="content">
-        <div class="editable-section">
-            <button class="edit-button float-right" onclick="toggleEditMode()"><i class="fas fa-edit"></i> Edit</button>
-            <div id="displayText">
-                {{ project.status_text }}
-            </div>
-            <div id="editText" style="display: none;">
-                <textarea id="editableTextarea" class="editable-textarea"></textarea>
-                <button class="btn btn-primary mt-2" onclick="saveText()">Save</button>
-            </div>
-        </div>
+        <button class="btn btn-outline-light ml-2"><i class="fas fa-plus"></i><a href="{{ url_for('projects.notes_create', id = project.id) }}">Create note</a></button>
+        <ul class="list-group">
+            {% for note in project.notes %}
+                <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.notes_edit', id = project.id, note_id = note.id) }}">{{ note.name }}</li>
+            {% endfor %}
+        </ul>
     </div>
 
     <!-- Modal -->
@@ -76,15 +72,12 @@
     </div>
 
 {% endblock %}
-
+    
 {% block javascript %}
-    <script>
-        const project_id = "{{ project.id }}";
-        var project_status_text = `{{ project.status_text }}`;
-    </script>
+<script>
+    const project_id = "{{ project.id }}";
+</script>
 {% endblock %}
 
 {% block js_files %}
-    <script src="{{ url_for('static', filename='js/project-edit-description.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/project-edit-name.js') }}"></script>
 {% endblock %}
