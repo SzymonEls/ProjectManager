@@ -13,10 +13,18 @@ from datetime import datetime, timedelta
 @login_required
 def index():
     projects = Project.query.all()
-    return render_template('projects/index.html', projects=projects)
+
+    projects_by_category = {}
+    for project in projects:
+        category = project.category
+        if category not in projects_by_category:
+            projects_by_category[category] = []
+        projects_by_category[category].append(project)
+    return render_template('projects/index.html', projects=projects, projects_by_category=projects_by_category)
 @bp.route('/store', methods=["POST"])
 @login_required
 def store():
+    print(request.form["name"])
     project = Project(name=request.form["name"], status_text = "")
     db.session.add(project)
     db.session.commit()
@@ -25,8 +33,17 @@ def store():
 @login_required
 def show(id):
     projects = Project.query.all()
+
+    projects_by_category = {}
+    for project in projects:
+        category = project.category
+        if category not in projects_by_category:
+            projects_by_category[category] = []
+        projects_by_category[category].append(project)
+
     project = Project.query.filter_by(id = id).first_or_404()
-    return render_template('projects/show.html', projects=projects, project=project)
+
+    return render_template('projects/show.html', projects=projects, project=project, projects_by_category=projects_by_category)
 @bp.route('/<id>/tasks')
 @login_required
 def show_tasks(id):
@@ -155,5 +172,13 @@ def notes_update(id):
         note.content = request.form["content"]
     db.session.commit()
     return jsonify({"status": "success"})
+@bp.route('/<id>/projects/update-category', methods=["POST"])
+@login_required
+def update_category(id):
+    project = Project.query.filter_by(id = id).first_or_404()
+    project.category = request.form["category"]
+    print(project.category)
+    db.session.commit()
+    return redirect(url_for("projects.show", id = id))
 
 

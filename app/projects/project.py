@@ -7,6 +7,7 @@ class Project(db.Model):
     status_text = db.Column(db.Text)
     tasks = db.relationship('Task', backref='project')
     notes = db.relationship('Note', backref='project')
+    category = db.Column(db.String(255))
 
     def __repr__(self):
-        return f'<Project "{self.title}">'
+        return f'<Project "{self.name}">'

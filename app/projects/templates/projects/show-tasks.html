@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 
 {% block navbar_title %}
-    <a class="navbar-brand" href="#" contenteditable="true" id="edit-project-name">{{ project.name }}</a>
-    <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal"><i class="fas fa-exchange-alt"></i></button>
+<a class="navbar-brand" href="#" contenteditable="true" id="edit-project-name">{{ project.name }}</a> <a href="#"><span class="badge badge-primary" style="margin-right: 10px;" data-toggle="modal" data-target="#changeCategoryModal">{{ project.category }}</span></a>
+<button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal"><i class="fas fa-exchange-alt"></i></button>
 {% endblock %}
 
 {% block content %}
@@ -84,6 +84,29 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="changeCategoryModalLabel">Change project category</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ url_for('projects.update_category', id = project.id) }}" method="POST">
+                        <input type="text" class="form-control mb-3" id="category" name="category" placeholder="Category" value="{{ project.category }}">
+                        <input type="submit" value="Save" class="form-control mb-3" id="submit">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 {% endblock %}
     

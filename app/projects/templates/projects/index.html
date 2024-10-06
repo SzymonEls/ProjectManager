@@ -8,13 +8,17 @@
 {% block content %}
 
     <div class="content">
-        <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal"><i class="fas fa-plus"></i>Create project</button>
-        <ul class="list-group">
-            {% for project in projects %}
-                <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
+        <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal" style="margin-bottom: 20px;"><i class="fas fa-plus"></i>Create project</button>
+        <br />
+        {% for category, projects in projects_by_category.items() %}
+            <b>{{ category or "Uncategorized" }}</b>
+            <ul class="list-group" style="margin-bottom: 10px;">
+                {% for project in projects %}
+                    <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+</div>
 
     <!-- Modal -->
     <div class="modal fade" id="changeProjectModal" tabindex="-1" aria-labelledby="changeProjectModalLabel" aria-hidden="true">
