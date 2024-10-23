@@ -43,6 +43,7 @@
             <div class="task-item" data-id="{{ task.id }}" data-name="{{ task.name }}">
                 <span contenteditable="true" class="task-name">{{ task.name }}</span>
                 <div class="task-date">
+                    <a href="#" class="star-task" data-id="{{ task.id }}">{% if task.starred == 1 %} Starred {% else %} Star {% endif %}</a>
                     <input type="date" class="task-change-date" value="{{ task.due_date }}">
                     <button type="button" class="btn btn-outline-danger btn-sm delete-task">Delete</button>
                 </div>

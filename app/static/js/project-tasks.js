@@ -45,6 +45,29 @@ function addTask() {
     }
 }
 
+function starTask(task_star_element, task_id){
+    $.ajax({
+        url: '/projects/' + project_id + '/tasks/star',
+        type: 'POST',
+        data:{
+            "task_id": task_id,
+        },
+        success: function(response) {
+            var status = ["Star", "Starred"]
+            if(response["starred"]){
+                task_star_element.html("Starred");
+            }else{
+                task_star_element.html("Star");
+            }
+            
+        },
+        error: function(xhr, status, error) {
+            console.error('Error:', error);
+            alert('Error: ' + status);
+        }
+    });
+}
+
 function deleteTask(task_element, task_id, task_name){
     if(confirm("Delete task " + task_name + "?")){
         $.ajax({
@@ -82,6 +105,12 @@ function updateTask(task_id, task_date, task_name){
         }
     });
 }
+
+$(document).on('click', '.star-task', function() {
+    var taskStarElement = $(this);
+    var taskId = taskStarElement.data('id');
+    starTask(taskStarElement, taskId);
+});
 
 $(document).on('click', '.delete-task', function() {
     var taskElement = $(this).closest('.task-item');

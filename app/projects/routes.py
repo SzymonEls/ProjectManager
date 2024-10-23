@@ -70,6 +70,13 @@ def update_tasks(project_id, task_id):
         task.name = request.form["task_name"]
     db.session.commit()
     return jsonify({"status": "success"})
+@bp.route('/<id>/tasks/star', methods=["POST"])
+@login_required
+def star_tasks(id):
+    task = Task.query.filter_by(id = request.form["task_id"]).first_or_404()
+    task.starred = not task.starred
+    db.session.commit()
+    return jsonify({"status": "success", "starred": task.starred})
 @bp.route('/<id>/tasks/delete', methods=["POST"])
 @login_required
 def delete_tasks(id):
