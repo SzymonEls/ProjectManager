@@ -1,0 +1,26 @@
+<div class="modal fade" id="changeProjectModal" tabindex="-1" aria-labelledby="changeProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changeProjectModalLabel">Change project</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- <input type="text" class="form-control mb-3" id="searchProjects" placeholder="Search projects..."> -->
+                <!-- <b>{{ project.category or "Uncategorized" }}</b> -->
+                <b>{{ project.category }}</b>
+                <ul class="list-group" style="margin-bottom: 10px;">
+                    {% for project2 in projects %}
+                        <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project2.name }}</a></li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('projects.index') }}">All projects</a>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

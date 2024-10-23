@@ -32,23 +32,15 @@ def store():
 @bp.route('/<id>')
 @login_required
 def show(id):
-    projects = Project.query.all()
-
-    projects_by_category = {}
-    for project in projects:
-        category = project.category
-        if category not in projects_by_category:
-            projects_by_category[category] = []
-        projects_by_category[category].append(project)
-
     project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.filter_by(category = project.category)
 
-    return render_template('projects/show.html', projects=projects, project=project, projects_by_category=projects_by_category)
+    return render_template('projects/show.html', projects=projects, project=project)
 @bp.route('/<id>/tasks')
 @login_required
 def show_tasks(id):
-    projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.filter_by(category = project.category)
     return render_template('projects/show-tasks.html', projects=projects, project=project)
 @bp.route('/<id>/update', methods=["POST"])
 @login_required
@@ -88,8 +80,8 @@ def delete_tasks(id):
 @bp.route('/<id>/events')
 @login_required
 def events(id):
-    projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.filter_by(category = project.category)
     return render_template('projects/show-events.html', projects=projects, project=project)
 @bp.route('/<id>/events/get')
 @login_required

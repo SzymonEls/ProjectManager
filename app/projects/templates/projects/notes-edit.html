@@ -37,6 +37,13 @@
           </ul>
     </div>
     <div class="content">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb bg-dark text-light">
+                <li class="breadcrumb-item"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><a href="{{ url_for('projects.notes', id=project.id) }}">Notes</a></li>
+                <li class="breadcrumb-item">{{ note.name }}</li>
+            </ol>
+        </nav>
         <h2 contenteditable="true" id="edit-note-name">{{ note.name }}</h2>
 
         <div class="editable-section">
@@ -52,53 +59,9 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="changeProjectModal" tabindex="-1" aria-labelledby="changeProjectModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changeProjectModalLabel">Change project</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" class="form-control mb-3" id="searchProjects" placeholder="Search projects...">
-                    <ul class="list-group">
-                        {% for project in projects %}
-                            <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
-                        {% endfor %}
-                    </ul>
-                    <a href="{{ url_for('projects.index') }}">All projects</a>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'modals/change-project.html' %}
 
-    <div class="modal fade" id="changeCategoryModal" tabindex="-1" aria-labelledby="changeCategoryModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="changeCategoryModalLabel">Change project category</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ url_for('projects.update_category', id = project.id) }}" method="POST">
-                        <input type="text" class="form-control mb-3" id="category" name="category" placeholder="Category" value="{{ project.category }}">
-                        <input type="submit" value="Save" class="form-control mb-3" id="submit">
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    {% include 'modals/change-project-category.html' %}
 
 {% endblock %}
 
