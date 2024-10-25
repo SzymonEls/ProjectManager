@@ -94,26 +94,28 @@ def events(id):
 @bp.route('/<id>/events/get')
 @login_required
 def events_get(id):
-    if id == "0":
-        events = Event.query.all()
-    else:
-        events = Event.query.filter_by(project_id = id).all()
+    events = Event.query.all()
     events_list = []
     for event in events:
+        color = "#303133"
+        if id != 0:
+            if (str(event.project_id) == str(id)):
+                color = "#112b96"
         if(event.all_day):
             event.end += timedelta(days = 1)
-            events_list.append({
-                'id': event.id,
-                'title': event.name,
-                'start': event.start.strftime('%Y-%m-%d'),
-                'end': event.end.strftime('%Y-%m-%d')
-            })    
+            start = event.start.strftime('%Y-%m-%d')
+            end = event.end.strftime('%Y-%m-%d')
         else:
-            events_list.append({
+            start = event.start.strftime('%Y-%m-%dT%H:%M:%S')
+            end = event.end.strftime('%Y-%m-%dT%H:%M:%S')
+        events_list.append({
                 'id': event.id,
                 'title': event.name,
-                'start': event.start.strftime('%Y-%m-%dT%H:%M:%S'),
-                'end': event.end.strftime('%Y-%m-%dT%H:%M:%S')
+                'start': start,
+                'end': end,
+                'project_name': Project.query.filter_by(id = event.project_id).first().name,
+                'project_url': url_for("projects.show", id = event.project_id),
+                'color': color
             })
     return jsonify(events_list)
 @bp.route('/<id>/events/store', methods=["POST"])
