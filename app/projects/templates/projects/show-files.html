@@ -28,13 +28,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link active">
+                <a href="{{ url_for('projects.notes', id=project.id) }}" class="nav-link">
                   <i class="fas fa-info"></i>
                     Notes
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('projects.files', id=project.id) }}" class="nav-link">
+                <a href="{{ url_for('projects.files', id=project.id) }}" class="nav-link active">
                   <i class="fas fa-info"></i>
                     Files
                 </a>
@@ -43,10 +43,34 @@
           </ul>
     </div>
     <div class="content">
-        <button class="btn btn-outline-light ml-2"><i class="fas fa-plus"></i><a href="{{ url_for('projects.notes_create', id = project.id) }}">Create note</a></button>
+        {% with messages = get_flashed_messages(with_categories=True)%}
+            {% if messages%}
+                {% for category, message in messages%}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {%endfor%}
+            {%endif%}
+        {%endwith%}
+        <form method="POST" action="{{ url_for('projects.files_upload', id = project.id) }}" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="submit">
+        </form>
+        <br />
+        <form method="POST" action="{{ url_for('projects.files_url', id = project.id) }}" enctype="multipart/form-data">
+            <input type="text" name="name" placeholder="URL Name" required>
+            <input type="url" name="url" placeholder="https://example.com" required>
+            <input type="submit">
+        </form>
+        <br />   
         <ul class="list-group">
-            {% for note in project.notes %}
-                <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.notes_edit', id = project.id, note_id = note.id) }}">{{ note.name }}</a></li>
+            {% for file in files %}
+                <li class="list-group-item bg-dark text-light file-item" data-id="{{ file.id }}" data-name="{{ file.name }}">
+                    <a href="#" class="file-change-name" data-id="{{ file.id }}" data-name="{{ file.name }}">{{ file.name }}</a>
+                    {% if file.url == 0 %} <a href="{{ url_for('projects.files_download', id = project.id, file_id = file.id) }}" class="btn btn-primary btn-sm">Download</a> {% endif %}
+                    <a href="{{ url_for('projects.files_show', id = project.id, file_id = file.id) }}" class="btn btn-primary btn-sm">Show</a>
+                    <button type="button" class="btn btn-primary btn-sm file-delete">Delete</button>
+                </li>
             {% endfor %}
         </ul>
     </div>
@@ -65,4 +89,5 @@
 {% endblock %}
 
 {% block js_files %}
+<script src="{{ url_for('static', filename='js/project-files.js') }}"></script>
 {% endblock %}

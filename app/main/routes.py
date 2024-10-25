@@ -1,4 +1,4 @@
-from flask import redirect, render_template, request, url_for, flash
+from flask import redirect, render_template, request, url_for, flash, current_app, send_from_directory
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.main import bp
@@ -8,6 +8,7 @@ from app.projects.task import Task
 from app.projects.project import Project
 from app.projects.event import Event
 from datetime import datetime
+import os
 
 @bp.route('/tasks')
 @login_required

@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, jsonify
+from flask import render_template, request, redirect, url_for, jsonify, current_app, send_from_directory, flash
 from flask_login import login_required
 from app.projects import bp
 from app.extensions import db
@@ -6,7 +6,10 @@ from app.projects.project import Project
 from app.projects.task import Task
 from app.projects.event import Event
 from app.projects.note import Note
+from app.projects.file import File
 from datetime import datetime, timedelta
+import os
+import uuid
 
 
 @bp.route('/')
@@ -24,7 +27,6 @@ def index():
 @bp.route('/store', methods=["POST"])
 @login_required
 def store():
-    print(request.form["name"])
     project = Project(name=request.form["name"], status_text = "")
     db.session.add(project)
     db.session.commit()
@@ -50,7 +52,6 @@ def update(id):
         project.name = request.form["name"]
     if "status_text" in request.form:
         project.status_text = request.form["status_text"]
-    #print(request)
     db.session.commit()
     return redirect(url_for('projects.show', id = id))
 @bp.route('/<id>/tasks/store', methods=["POST"])
@@ -119,7 +120,6 @@ def events_get(id):
 @login_required
 def events_store(id):
     event = Event(project_id = id, name=request.form["title"], start = datetime.strptime(request.form["start"], '%Y-%m-%dT%H:%M:%S%z'), end = datetime.strptime(request.form["end"], '%Y-%m-%dT%H:%M:%S%z'), all_day=int(request.form["all-day"]))
-    print(event.start)
     db.session.add(event)
     db.session.commit()
     return jsonify({"status": "success"})
@@ -131,7 +131,6 @@ def events_update(id):
     event.start = datetime.strptime(request.form["start"], '%Y-%m-%dT%H:%M:%S%z')
     event.end = datetime.strptime(request.form["end"], '%Y-%m-%dT%H:%M:%S%z')
     event.all_day=int(request.form["all_day"])
-    print(event.start)
     db.session.commit()
     return jsonify({"status": "success"})
 @bp.route('/<id>/events/delete', methods=["POST"])
@@ -176,8 +175,87 @@ def notes_update(id):
 def update_category(id):
     project = Project.query.filter_by(id = id).first_or_404()
     project.category = request.form["category"]
-    print(project.category)
     db.session.commit()
     return redirect(url_for("projects.show", id = id))
-
+@bp.route('/<id>/files')
+@login_required
+def files(id):
+    files = File.query.all()
+    project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.filter_by(category = project.category)
+    return render_template('projects/show-files.html', files=files, project=project, projects=projects)
+@bp.route('/<id>/files/upload', methods=["POST"])
+@login_required
+def files_upload(id):
+    if 'file' not in request.files:
+        return jsonify({"status": "error", "message": "No file found"})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"status": "error", "message": "No file selected"})
+    if file:
+        ext = os.path.splitext(file.filename)[1]  # Pobiera rozszerzenie pliku
+        unique_name = f"{uuid.uuid4()}{ext}"
+        filepath = os.path.join(current_app.static_folder + "/uploads", unique_name)
+        db_file = File(name=file.filename, project_id = id, path = unique_name)
+        db.session.add(db_file)
+        db.session.commit()
+        file.save(filepath)
+        return redirect(url_for('projects.files', id = id))
+@bp.route('/<id>/files/url', methods=["POST"])
+@login_required
+def files_url(id):
+    db_file = File(name=request.form["name"], project_id = id, path = request.form["url"], url = 1)
+    db.session.add(db_file)
+    db.session.commit()
+    return redirect(url_for('projects.files', id = id))
+@bp.route('/<id>/files/download/<file_id>')
+@login_required
+def files_download(id, file_id):
+    file_record = File.query.filter_by(id=file_id).first()
+    if file_record:
+        if os.path.exists(current_app.static_folder + "/uploads/"+file_record.path):
+            return send_from_directory(current_app.static_folder + "/uploads", file_record.path, as_attachment=True, download_name=file_record.name)
+        else:
+            flash("File does not exists", "danger")
+    else:
+        flash("File not found in database", "danger")
+    return redirect(url_for('projects.files', id = id))
+@bp.route('/<id>/files/show/<file_id>')
+@login_required
+def files_show(id, file_id):
+    file_record = File.query.filter_by(id=file_id).first()
+    if file_record:
+        if file_record.url:
+            return redirect(file_record.path)
+        elif os.path.exists(current_app.static_folder + "/uploads/"+file_record.path):
+            return send_from_directory(current_app.static_folder + "/uploads", file_record.path, as_attachment=False, download_name=file_record.name)
+        else:
+            flash("File does not exists", "danger")
+    else:
+        flash("File not found in database", "danger")
+    return redirect(url_for('projects.files', id = id))
+@bp.route('/<id>/files/delete/<file_id>', methods=["POST"])
+@login_required
+def files_delete(id, file_id):
+    file_record = File.query.filter_by(id=file_id).first()
+    if file_record:
+        if os.path.exists(current_app.static_folder + "/uploads/"+file_record.path):
+            #print(os.path.join(current_app.static_folder, "uploads"))
+            #print(os.path.join(os.path.join(current_app.static_folder, "uploads"), file_record.path))
+            os.remove(os.path.join(os.path.join(current_app.static_folder, "uploads"), file_record.path))
+            flash("File successfully deleted.", "success")
+        else:
+            flash("File does not exists", "danger")
+        db.session.delete(file_record)
+        db.session.commit()
+    else:
+        flash("File not found in database", "danger")
+    return jsonify({"status": "success"})
+@bp.route('/<id>/files/update/<file_id>', methods=["POST"])
+@login_required
+def files_update(id, file_id):
+    file = File.query.filter_by(id=file_id).first()
+    file.name = request.form["file_name"]
+    db.session.commit()
+    return jsonify({"status": "success"})
 

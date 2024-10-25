@@ -42,6 +42,7 @@ instance/
 *.pyc
 *.log
 *.db
+uploads/
 
 # VS Code configuration
 .vscode/
