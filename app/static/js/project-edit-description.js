@@ -1,6 +1,23 @@
+function convertMarkdown(markdownText, html_content) {
+    const htmlContent = marked.parse(markdownText, {
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+    html_content.innerHTML = htmlContent;
+    renderMathInElement(html_content, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\(", right: "\\)", display: false},
+            {left: "$", right: "$", display: false}
+        ]
+    });
+}
+
 $(document).ready( function(){
     var displayText = document.getElementById('displayText');
-    displayText.innerHTML = marked.parse(project_status_text)
+    //displayText.innerHTML = marked.parse(project_status_text);
+    convertMarkdown(project_status_text, displayText);
 });
 
 function toggleEditMode() {
@@ -34,7 +51,8 @@ function saveText() {
                 "status_text": status_text_new
             },
             success: function(response) {
-                displayText.innerHTML = marked.parse(status_text_new);
+                //displayText.innerHTML = marked.parse(status_text_new);
+                convertMarkdown(status_text_new, displayText);
                 toggleEditMode();
             },
             error: function(xhr, status, error) {

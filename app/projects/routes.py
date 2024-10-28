@@ -36,7 +36,7 @@ def store():
 def show(id):
     project = Project.query.filter_by(id = id).first_or_404()
     projects = Project.query.filter_by(category = project.category)
-
+    project.status_text = project.status_text.replace("\\", "\\\\")
     return render_template('projects/show.html', projects=projects, project=project)
 @bp.route('/<id>/tasks')
 @login_required
@@ -154,6 +154,7 @@ def notes_edit(id, note_id):
     projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
     note = Note.query.filter_by(id = note_id).first_or_404()
+    note.content = note.content.replace("\\", "\\\\")
     return render_template('projects/notes-edit.html', projects=projects, project=project, note=note)
 @bp.route('/<id>/notes/new')
 @login_required

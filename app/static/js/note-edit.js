@@ -1,6 +1,23 @@
+function convertMarkdown(markdownText, html_content) {
+    const htmlContent = marked.parse(markdownText, {
+        highlight: function (code, lang) {
+            return hljs.highlightAuto(code).value;
+        }
+    });
+    html_content.innerHTML = htmlContent;
+    renderMathInElement(html_content, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "\\(", right: "\\)", display: false},
+            {left: "$", right: "$", display: false}
+        ]
+    });
+}
+
 $(document).ready( function(){
     var displayText = document.getElementById('displayText');
-    displayText.innerHTML = marked.parse(note_content);
+    //displayText.innerHTML = marked.parse(note_content);
+    convertMarkdown(note_content, displayText);
 });
 
 function toggleEditMode() {
@@ -33,7 +50,8 @@ function saveText() {
                 "content": content_new
             },
             success: function(response) {
-                displayText.innerHTML = marked.parse(content_new);
+                //displayText.innerHTML = marked.parse(content_new);
+                convertMarkdown(content_new, displayText);
                 toggleEditMode();
             },
             error: function(xhr, status, error) {
