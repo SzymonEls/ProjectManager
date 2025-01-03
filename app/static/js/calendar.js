@@ -21,6 +21,8 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         date_end.setDate(date_end.getDate() - 1);
         console.log(date_end.toISOString());
         document.getElementById('eventTitle').value = info.event.title;
+        document.getElementById('eventLocation').value = info.event.extendedProps.location;
+        document.getElementById('eventTravelTime').value = info.event.extendedProps.travel_time;
         document.getElementById('project-name').innerHTML = '<a href="' + info.event.extendedProps.project_url +  '">' + info.event.extendedProps.project_name + '</a>';
         if(info.event.allDay == false){
             document.getElementById('eventStart').type = "datetime-local";
@@ -45,21 +47,33 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
         document.getElementById('saveEvent').onclick = function() {
             //console.log(info);
             let date_end = new Date(document.getElementById('eventEnd').value);
-            date_end.setDate(date_end.getDate() + 1);
+            
+
+
+            var all_day = 1;
+            if(info.event.startStr.length > 10){
+                all_day = 0;
+                date_end.setHours(date_end.getHours() + 1);
+            }else{
+                date_end.setDate(date_end.getDate() + 1);
+            }
             console.log(date_end.toISOString());
             info.event.setProp('title', document.getElementById('eventTitle').value);
             info.event.setStart(document.getElementById('eventStart').value);
             info.event.setEnd(date_end.toISOString().slice(0, 16));
-
-
-        var all_day = 1;
-        if(info.event.startStr.length > 10){
-            all_day = 0;
-        }
-
-            date_end = new Date(info.event.endStr);
-            date_end.setDate(date_end.getDate() - 1);
-            console.log(date_end.toISOString());
+            info.event.setExtendedProp("location", document.getElementById('eventLocation').value)
+            info.event.setExtendedProp("travel_time", document.getElementById('eventTravelTime').value)
+            
+            if(all_day == 0){
+                //date_end = new Date(info.event.endStr);
+                date_end.setHours(date_end.getHours() - 1);
+                console.log(date_end.toISOString());
+            }else{
+                //date_end = new Date(info.event.endStr);
+                date_end.setDate(date_end.getDate() - 1);
+                console.log(date_end.toISOString());
+            }
+            
             
             // Use AJAX to save the changes to the server
             $.ajax({
@@ -69,8 +83,10 @@ var calendar = new FullCalendar.Calendar(calendarEl, {
                 id: info.event.id,
                 title: info.event.title,
                 start: calendar.formatIso(info.event.start),
-                end: info.event.end ? calendar.formatIso(date_end.toISOString()) : null,
-                all_day: all_day
+                end: calendar.formatIso(date_end.toISOString()),
+                all_day: all_day,
+                location: info.event.extendedProps.location,
+                travel_time: info.event.extendedProps.travel_time
             },
             success: function(response) {
                 console.log('Event updated successfully');

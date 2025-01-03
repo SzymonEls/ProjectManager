@@ -7,6 +7,8 @@ class Event(db.Model):
     start = db.Column(db.DateTime, nullable=False)
     end = db.Column(db.DateTime, nullable=False)
     all_day = db.Column(db.Boolean, default=False)
+    location = db.Column(db.String(255))
+    travel_time = db.Column(db.Integer)
 
     def __repr__(self):
         return f'<Event "{self.name}", "{self.start}", "{self.end}">'

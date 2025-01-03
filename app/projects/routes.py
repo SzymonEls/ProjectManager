@@ -115,7 +115,10 @@ def events_get(id):
                 'end': end,
                 'project_name': Project.query.filter_by(id = event.project_id).first().name,
                 'project_url': url_for("projects.show", id = event.project_id),
-                'color': color
+                'color': color,
+                'location': event.location,
+                'travel_time': event.travel_time
+
             })
     return jsonify(events_list)
 @bp.route('/<id>/events/store', methods=["POST"])
@@ -130,6 +133,8 @@ def events_store(id):
 def events_update(id):
     event = Event.query.filter_by(id = request.form["id"]).first_or_404()
     event.name=request.form["title"]
+    event.location=request.form["location"]
+    event.travel_time=request.form["travel_time"]
     event.start = datetime.strptime(request.form["start"], '%Y-%m-%dT%H:%M:%S%z')
     event.end = datetime.strptime(request.form["end"], '%Y-%m-%dT%H:%M:%S%z')
     event.all_day=int(request.form["all_day"])

@@ -13,13 +13,13 @@
    <div class="sidebar">
         <ul class="nav nav-pills flex-column mb-auto">
             <li class="nav-item">
-                <a href="{{ url_for('main.day_plan') }}" class="nav-link">
+                <a href="{{ url_for('main.day_plan') }}" class="nav-link active">
                     <i class="fas fa-info"></i>
                     Day dashboard
                 </a>
             </li>
             <li class="nav-item">
-                <a href="{{ url_for('main.events') }}" class="nav-link active">
+                <a href="{{ url_for('main.events') }}" class="nav-link">
                     <i class="fas fa-tasks"></i>
                     Calendar
                 </a>
@@ -27,7 +27,22 @@
           </ul>
     </div>
     <div class="content">
-        <div id="calendar"></div>
+      <form method="POST">
+          <label for="date">Wybierz datę:</label>
+          <input type="date" id="date" name="date" value="{{ date }}" required>
+          <button id="submit" style="display: none;" type="submit">Pokaż wydarzenia</button>
+      </form>
+        {{ date }}
+        <ul>
+            {% for event in events %}
+              {% if event.all_day == 1 %}
+                {% if event.travel_time or event.location %} <li><i>{{ event.travel_time }} (travel), location: {{ event.location }}</i></li> {% endif %}
+              {% else %}
+                {% if event.travel_time or event.location %} <li>{{ event.travel_start.strftime("%H:%M") }} <i>(travel), location: {{ event.location }}</i></li> {% endif %}
+              {% endif %}
+              <li>{% if event.all_day == 0 %} {{ event.start.strftime("%H:%M") }} - {{ event.end.strftime("%H:%M") }} {% endif %}<b>{{ event.name }}</b></li>
+            {% endfor %}
+        </ul>
     </div>
 
     <!-- Modal -->
@@ -53,14 +68,6 @@
                 <label for="eventEnd" class="form-label">End Date</label>
                 <input type="datetime-local" class="form-control" id="eventEnd">
               </div>
-              <div class="mb-3">
-                <label for="eventTitle" class="form-label">Event Location</label>
-                <input type="text" class="form-control" id="eventLocation">
-              </div>
-              <div class="mb-3">
-                <label for="eventTitle" class="form-label">Event travel time</label>
-                <input type="number" class="form-control" id="eventTravelTime">
-              </div>
             </form>
           </div>
           <div class="modal-footer">
@@ -73,11 +80,8 @@
 {% endblock %}
     
 {% block javascript %}
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 {% endblock %}
 
 {% block js_files %}
-<script src="{{ url_for('static', filename='js/calendar.js') }}"></script>
-<script src="{{ url_for('static', filename='js/project-edit-name.js') }}"></script>
-<script src="{{ url_for('static', filename='js/project-tasks.js') }}"></script>
+<script src="{{ url_for('static', filename='js/day-plan.js') }}"></script>
 {% endblock %}

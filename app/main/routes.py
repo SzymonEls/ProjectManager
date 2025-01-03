@@ -7,7 +7,7 @@ from app.main.user import User
 from app.projects.task import Task
 from app.projects.project import Project
 from app.projects.event import Event
-from datetime import datetime
+from datetime import datetime, timedelta
 import os
 
 @bp.route('/tasks')
@@ -23,10 +23,25 @@ def tasks_today():
 @bp.route('/events')
 @login_required
 def events():
-    id = 1
+    id = 1 #TO DO
     projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
     return render_template('events.html', projects=projects, project=project)
+@bp.route('/day-plan', methods=['GET', 'POST'])
+@login_required
+def day_plan():
+    selected_date = datetime.today().strftime('%Y-%m-%d')
+    selected_date_start = datetime.today().strftime('%Y-%m-%d 00:00:00')
+    selected_date_end = datetime.today().strftime('%Y-%m-%d 23:59:59')
+    if request.method == 'POST':
+        selected_date = request.form.get('date')
+        selected_date_start = selected_date + " 00:00:00"
+        selected_date_end = selected_date + "23:59:59"
+    daily_events = Event.query.filter(Event.start >= selected_date_start, Event.end <= selected_date_end).order_by(Event.start)
+    for event in daily_events:
+        if not event.all_day:
+            event.travel_start = event.start - timedelta(minutes=event.travel_time or 0)
+    return render_template('day-plan.html', events = daily_events, date = selected_date)
 @bp.route('/', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
