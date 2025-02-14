@@ -23,7 +23,7 @@ class Config:
     FLASK_APP = os.getenv('FLASK_APP')
     DEBUG = os.getenv('DEBUG')
     REGISTER = os.getenv('REGISTER')
-    AUTOMATIC_DB_CREATION = int(os.getenv('AUTOMATIC_DB_CREATION'))
+    AUTOMATIC_DB_CREATION = int(os.getenv('AUTOMATIC_DB_CREATION')) or 1
     #DB_USER = os.getenv('DB_USER', 'root')
     #DB_PASSWORD = os.getenv('DB_PASSWORD', 'password')
     #DB_HOST = os.getenv('DB_HOST', 'localhost')
