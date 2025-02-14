@@ -15,7 +15,7 @@ import uuid
 @bp.route('/')
 @login_required
 def index():
-    projects = Project.query.all()
+    projects = Project.query.order_by(Project.category, Project.name).all()
 
     projects_by_category = {}
     for project in projects:
