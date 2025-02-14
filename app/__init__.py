@@ -3,16 +3,24 @@ from config import Config
 from app.extensions import db
 from flask_migrate import Migrate
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import os
+from flask_migrate import upgrade
 
-def create_app(config_class=Config):
+def create_app():
     app = Flask(__name__)
-    app.config.from_object(config_class)
+    app.config.from_object(Config)
 
     # Initialize Flask extensions here
     db.init_app(app)
-
     # Initialize Flask-Migrate here
     migrate = Migrate(app, db)
+    if app.config["AUTOMATIC_DB_CREATION"]:
+        with app.app_context():
+            DB_FILE = "db/app.db"
+            if not os.path.exists(DB_FILE):
+                db.create_all()
+            else:
+                upgrade()
 
     # Initialize Flask-Login here
     login_manager = LoginManager(app)

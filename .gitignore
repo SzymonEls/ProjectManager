@@ -43,6 +43,7 @@ instance/
 *.log
 *.db
 uploads/
+upload_data/
 
 # VS Code configuration
 .vscode/

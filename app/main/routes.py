@@ -23,10 +23,10 @@ def tasks_today():
 @bp.route('/events')
 @login_required
 def events():
-    id = 1 #TO DO
+    #id = 1 #TO DO
     projects = Project.query.all()
-    project = Project.query.filter_by(id = id).first_or_404()
-    return render_template('events.html', projects=projects, project=project)
+    #project = Project.query.filter_by(id = id).first_or_404()
+    return render_template('events.html', projects=projects)
 @bp.route('/day-plan', methods=['GET', 'POST'])
 @login_required
 def day_plan():
@@ -50,15 +50,18 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and check_password_hash(user.password, password):
+            print("test")
             login_user(user)
             return redirect(url_for('projects.index'))
 
         flash('Invalid username or password.', category="warning")
+        print("Invalid username or password")
+        return redirect(url_for('main.register'))
     return render_template('login.html')
 
 @bp.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == 'POST':
+    if request.method == 'POST' and int(current_app.config.get('REGISTER')) == 1:
         if request.form["password"] == request.form["confirm-password"]:
             existing_user = User.query.filter_by(username=request.form["username"]).first()
             if existing_user is None:

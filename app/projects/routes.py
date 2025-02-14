@@ -188,7 +188,7 @@ def update_category(id):
 @bp.route('/<id>/files')
 @login_required
 def files(id):
-    files = File.query.all()
+    files = File.query.filter_by(project_id = id)
     project = Project.query.filter_by(id = id).first_or_404()
     projects = Project.query.filter_by(category = project.category)
     return render_template('projects/show-files.html', files=files, project=project, projects=projects)
