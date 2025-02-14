@@ -15,7 +15,6 @@ ENV/
 .venv/
 .ENV/
 .env
-.env.*
 .secret
 
 # Python, Byte-compiled / optimized / DLL files
