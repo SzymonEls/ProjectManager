@@ -35,14 +35,14 @@ def store():
 @login_required
 def show(id):
     project = Project.query.filter_by(id = id).first_or_404()
-    projects = Project.query.filter_by(category = project.category)
+    projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     project.status_text = project.status_text.replace("\\", "\\\\")
     return render_template('projects/show.html', projects=projects, project=project)
 @bp.route('/<id>/tasks')
 @login_required
 def show_tasks(id):
     project = Project.query.filter_by(id = id).first_or_404()
-    projects = Project.query.filter_by(category = project.category)
+    projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     return render_template('projects/show-tasks.html', projects=projects, project=project)
 @bp.route('/<id>/update', methods=["POST"])
 @login_required
@@ -89,7 +89,7 @@ def delete_tasks(id):
 @login_required
 def events(id):
     project = Project.query.filter_by(id = id).first_or_404()
-    projects = Project.query.filter_by(category = project.category)
+    projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     return render_template('projects/show-events.html', projects=projects, project=project)
 @bp.route('/<id>/events/get')
 @login_required
@@ -150,14 +150,14 @@ def events_delete(id):
 @bp.route('/<id>/notes')
 @login_required
 def notes(id):
-    projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     return render_template('projects/show-notes.html', projects=projects, project=project)
 @bp.route('/<id>/notes/<note_id>')
 @login_required
 def notes_edit(id, note_id):
-    projects = Project.query.all()
     project = Project.query.filter_by(id = id).first_or_404()
+    projects = Project.query.order_by(Project.category, Project.name).order_by(Project.category, Project.name).filter_by(category = project.category)
     note = Note.query.filter_by(id = note_id).first_or_404()
     note.content = note.content.replace("\\", "\\\\")
     return render_template('projects/notes-edit.html', projects=projects, project=project, note=note)
@@ -190,7 +190,7 @@ def update_category(id):
 def files(id):
     files = File.query.filter_by(project_id = id)
     project = Project.query.filter_by(id = id).first_or_404()
-    projects = Project.query.filter_by(category = project.category)
+    projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     return render_template('projects/show-files.html', files=files, project=project, projects=projects)
 @bp.route('/<id>/files/upload', methods=["POST"])
 @login_required
