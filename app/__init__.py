@@ -16,11 +16,7 @@ def create_app():
     migrate = Migrate(app, db)
     if app.config["AUTOMATIC_DB_CREATION"]:
         with app.app_context():
-            DB_FILE = "db/app.db"
-            if not os.path.exists(DB_FILE):
-                db.create_all()
-            else:
-                upgrade()
+            upgrade()
 
     # Initialize Flask-Login here
     login_manager = LoginManager(app)
