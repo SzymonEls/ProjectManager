@@ -23,7 +23,7 @@
             <ul class="list-group" style="margin-bottom: 10px;">
                 {% for project in projects %}
                     <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a>
-                        <a href="#" class="star-project float-right" data-id="{{ project.id }}">{% if project.starred == 1 %} Starred {% else %} Star {% endif %}</a>
+                        <a class="star-project float-right" data-id="{{ project.id }}">{% if project.starred == 1 %} Starred {% else %} Star {% endif %}</a>
                     </li>
                 {% endfor %}
             </ul>
