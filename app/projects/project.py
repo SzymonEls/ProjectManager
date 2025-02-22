@@ -8,6 +8,7 @@ class Project(db.Model):
     tasks = db.relationship('Task', backref='project')
     notes = db.relationship('Note', backref='project')
     category = db.Column(db.String(255))
+    starred = db.Column(db.Boolean, server_default="0", nullable=False)
 
     def __repr__(self):
         return f'<Project "{self.name}">'

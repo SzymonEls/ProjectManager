@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, jsonify, current_app, send_from_directory, flash
+from flask import render_template, request, redirect, url_for, jsonify, current_app, send_from_directory, flash, session
 from flask_login import login_required
 from app.projects import bp
 from app.extensions import db
@@ -16,14 +16,30 @@ import uuid
 @login_required
 def index():
     projects = Project.query.order_by(Project.category, Project.name).all()
-
+    if session.get("selected_starred_projects_tab") and request.args.get("change_tab", "0") == "0":
+        return redirect(url_for("projects.index_starred"))
+    show_starred = 0
+    session["selected_starred_projects_tab"] = 0
     projects_by_category = {}
     for project in projects:
         category = project.category
         if category not in projects_by_category:
             projects_by_category[category] = []
         projects_by_category[category].append(project)
-    return render_template('projects/index.html', projects=projects, projects_by_category=projects_by_category)
+    return render_template('projects/index.html', projects=projects, projects_by_category=projects_by_category, show_starred=show_starred)
+@bp.route('/starred')
+@login_required
+def index_starred():
+    projects = Project.query.filter_by(starred = 1).order_by(Project.category, Project.name).all()
+    show_starred = 1
+    session["selected_starred_projects_tab"] = 1
+    projects_by_category = {}
+    for project in projects:
+        category = project.category
+        if category not in projects_by_category:
+            projects_by_category[category] = []
+        projects_by_category[category].append(project)
+    return render_template('projects/index.html', projects=projects, projects_by_category=projects_by_category, show_starred=show_starred)
 @bp.route('/store', methods=["POST"])
 @login_required
 def store():
@@ -38,6 +54,13 @@ def show(id):
     projects = Project.query.order_by(Project.category, Project.name).filter_by(category = project.category)
     project.status_text = project.status_text.replace("\\", "\\\\")
     return render_template('projects/show.html', projects=projects, project=project)
+@bp.route('/<id>/star', methods=["POST"])
+@login_required
+def star_projects(id):
+    project = Project.query.filter_by(id = request.form["project_id"]).first_or_404()
+    project.starred = not project.starred
+    db.session.commit()
+    return jsonify({"status": "success", "starred": project.starred})
 @bp.route('/<id>/tasks')
 @login_required
 def show_tasks(id):

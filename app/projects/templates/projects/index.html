@@ -9,12 +9,22 @@
 
     <div class="content">
         <button class="btn btn-outline-light ml-2" data-toggle="modal" data-target="#changeProjectModal" style="margin-bottom: 20px;"><i class="fas fa-plus"></i>Create project</button>
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <a class="nav-link {% if show_starred == 0 %} active {% endif %}" aria-current="page" href="{{ url_for('projects.index', change_tab=1) }}">All</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {% if show_starred == 1 %} active {% endif %}" aria-current="page" href="{{ url_for('projects.index_starred') }}">Starred</a>
+            </li>
+        </ul>
         <br />
         {% for category, projects in projects_by_category.items() %}
             <b>{{ category or "Uncategorized" }}</b>
             <ul class="list-group" style="margin-bottom: 10px;">
                 {% for project in projects %}
-                    <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a></li>
+                    <li class="list-group-item bg-dark text-light"><a href="{{ url_for('projects.show', id=project.id) }}">{{ project.name }}</a>
+                        <a href="#" class="star-project float-right" data-id="{{ project.id }}">{% if project.starred == 1 %} Starred {% else %} Star {% endif %}</a>
+                    </li>
                 {% endfor %}
             </ul>
         {% endfor %}
@@ -43,4 +53,8 @@
         </div>
     </div>
 
+{% endblock %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/projects.js') }}"></script>
 {% endblock %}
